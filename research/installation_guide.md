@@ -53,7 +53,7 @@ Get latest release
 ```bash
 wget https://github.com/containerd/containerd/releases/download/v1.7.0/containerd-1.7.0-linux-amd64.tar.gz
 cd /usr/local/
-sudo tar -xvf /home/vardgeo/sources/containerd-1.7.0-linux-amd64.tar.gz 
+sudo tar -xvf containerd-1.7.0-linux-amd64.tar.gz 
 ```
 Configure containerd
 Download the standard `systemd(1)` service file and install to
@@ -73,7 +73,8 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 sudo vi /etc/containerd/config.toml
 ```
 Add the Kata Containers configuration to the containerd configuration file:
-    ```toml
+
+```toml
     [plugins]
       [plugins."io.containerd.grpc.v1.cri"]
         [plugins."io.containerd.grpc.v1.cri".containerd]
@@ -81,7 +82,8 @@ Add the Kata Containers configuration to the containerd configuration file:
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
             [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.kata]
               runtime_type = "io.containerd.kata.v2"
-    ```
+```
+    
 Restart containerd service
 ```bash
 sudo systemctl restart containerd.service
@@ -168,14 +170,16 @@ $ sudo ./create.sh
 ```
 
 Change containerd configuration:
-    ```toml
+
+```toml
 [plugins]
   [plugins."io.containerd.snapshotter.v1.devmapper"]
     pool_name = "${POOL_NAME}"
     root_path = "${DATA_DIR}"
     base_image_size = "10GB"
     discard_blocks = true
-    ```
+```
+
 ```bash
 sudo vi /etc/containerd/config.toml
 sudo systemctl restart containerd
