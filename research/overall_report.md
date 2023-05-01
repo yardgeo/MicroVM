@@ -143,6 +143,7 @@ It is possible to run a container image(pod) in kubernetes using Kata runtime (=
 
 
 1. Multiple containers share environmental variables if and only if they are explicitly linked (-- link arg) which is deprecated arg. [Source](https://docs.docker.com/network/links/)
+<img width="682" alt="image" src="https://user-images.githubusercontent.com/43379766/235499012-d5f3152c-22e8-4883-909c-ef98543179f1.png">
 
 2. MicroVm provides strong container isolation and sharing environmental variables is not possible.
 
