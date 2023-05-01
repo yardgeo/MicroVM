@@ -10,4 +10,4 @@ Repository for the master's thesis project "Evaluation of MicroVMs vs. standard 
 [Firecracker installation guide](research/installation/firecracker_installation.md) to install and configure Firecracker.
 
 
-[Overall report](research/installation/firecracker_installation.md) to learn how to run MicroVms.
+[Overall report](research/overall_report.md) to learn how to run MicroVms.
