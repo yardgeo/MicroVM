@@ -48,7 +48,7 @@ sudo ctr run --runtime "io.containerd.kata.v2" --mount "type=bind,src=$PWD/host-
 
 
 
-### Building local container
+### Building local MicroVm container
 
 
 
