@@ -21,7 +21,7 @@ GPU available
     git clone https://github.com/aqlaboratory/openfold.git
     cd openfold
     ```
-3.  Add esm dependencies to the environment.yml file. You can find example of enviroment file which was tested [here](./esm/installation/environment.yml)
+3.  Add esm dependencies to the environment.yml file. You can find example of enviroment file which was tested [here](./environment.yml)
 4.  Building the docker image
 
 ```bash
@@ -37,4 +37,4 @@ openfold python test_script/test.py
 6. Pypi esm lybrary uses torch and download all models to /root/.cache/torch/hub/checkpoints filepath. In order to not download models every container runtime it is recommended to mount it.
 7. [Official esm guide](https://github.com/facebookresearch/esm)  suggests to use esmfold_v1 from pretrained models dataset.
  Although this model is recommended it requires a lot of resources (RAM and CPU). To verify esm installation esmfold_structure_module_only_8M was used.
-8. You can find test script [here](./esm/installation/test.py).
+8. You can find test script [here](./test.py).
