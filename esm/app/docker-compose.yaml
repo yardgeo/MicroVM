@@ -17,8 +17,8 @@ services:
       - dev.env
     depends_on:
       - rabbitmq
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     volumes:
       - /Users/gvyarduhin/Siemens/MicroVM/data/uniprot:/opt/openfold/uniprot
     environment:
