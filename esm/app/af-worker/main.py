@@ -24,7 +24,7 @@ def process_message(ch, method, properties, body):
     uniprot_id = message['uniprot_id']
 
     # Execute the shell command with the job ID
-    output_dir = f"{Config.AF_DIR}/{job_id}"
+    output_dir = f"{Config.AF_DIR}"
 
     download_model(uniprot_id, job_id, output_dir)
 
