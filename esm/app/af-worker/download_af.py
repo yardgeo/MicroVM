@@ -21,7 +21,7 @@ def download_model(uniprot_id, job_id, output_directory):
             if response.status_code == 200:
                 # Save the structure prediction to a file
                 file_name = f"{output_directory}/{job_id}/{uniprot_id}.pdb"
-                with open(file_name, "wb") as file:
+                with open(file_name, "w") as file:
                     file.write(response.content)
                 print(
                     f"Downloaded AlphaFold structure prediction for UniProt ID: {uniprot_id}")
