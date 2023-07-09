@@ -1,5 +1,6 @@
 import os
 import uuid
+import json
 
 import pika
 import requests
@@ -18,6 +19,7 @@ app = FastAPI()
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
 RABBITMQ_ESM_QUEUE = Config.RABBITMQ_ESM_QUEUE
+RABBITMQ_AF_QUEUE = Config.RABBITMQ_AF_QUEUE
 
 # Establish connection to RabbitMQ server
 connection = pika.BlockingConnection(
@@ -26,6 +28,42 @@ channel = connection.channel()
 
 # Declare the queue
 channel.queue_declare(queue=RABBITMQ_ESM_QUEUE)
+channel.queue_declare(queue=RABBITMQ_AF_QUEUE)
+
+
+def download_structure_from_pdb(uniprot_id, job_id):
+    # Define the PDB API endpoint
+    api_url = f"https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/{uniprot_id}"
+
+    try:
+        # Send GET request to the API endpoint
+        response = requests.get(api_url)
+        response_json = response.json()
+
+        # Check if the response contains mappings
+        if "mappings" in response_json:
+            # Get the first mapping entry (assuming there's only one)
+            mapping = response_json["mappings"][0]
+
+            # Extract the PDB ID
+            pdb_id = mapping["identifier"]
+
+            # Download the structure file
+            pdb_url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
+            pdb_response = requests.get(pdb_url)
+
+            # Save the structure file
+            file_name = f"{Config.PDB_DIR}/{job_id}/protein.pdb"
+            with open(file_name, "wb") as f:
+                f.write(pdb_response.content)
+
+            print(
+                f"Structure downloaded for UniProt ID: {uniprot_id}, PDB ID: {pdb_id}")
+        else:
+            print(f"No mappings found for UniProt ID: {uniprot_id}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred during the request: {e}")
 
 
 @app.post("/jobs/")
@@ -54,10 +92,24 @@ async def create_job(model: CreateJobModel):
     else:
         print(f"Failed to download FASTA file for UniProt ID: {uniprot_id}")
 
+    # download pdb
+    download_structure_from_pdb(uniprot_id, job_id)
+
+    # make message
+    message = {
+        'job_id': job_id,
+        'uniprot_id': uniprot_id
+    }
+
     # run async jobs
     channel.basic_publish(exchange='',
                           routing_key=RABBITMQ_ESM_QUEUE,
-                          body=job_id)
+                          body=json.dumps(message))
+
+    channel.basic_publish(exchange='',
+                          routing_key=RABBITMQ_AF_QUEUE,
+                          body=json.dumps(message))
+
     print(f"Message sent with job ID: {job_id}")
 
     return {"jobId": job_id}

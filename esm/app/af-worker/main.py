@@ -1,9 +1,12 @@
 import pika
-import subprocess
+from config import Config
+import json
+
+from download_af import download_model
 
 # RabbitMQ connection parameters
-RABBITMQ_HOST = 'localhost'
-RABBITMQ_QUEUE = 'task_queue'
+RABBITMQ_HOST = Config.RABBITMQ_HOST
+RABBITMQ_QUEUE = Config.RABBITMQ_AF_QUEUE
 
 # Establish connection to RabbitMQ server
 connection = pika.BlockingConnection(
@@ -16,13 +19,14 @@ channel.queue_declare(queue=RABBITMQ_QUEUE)
 
 # Callback function for processing messages
 def process_message(ch, method, properties, body):
-    job_id = body.decode()
+    message = json.loads(body)
+    job_id = message['job_id']
+    uniprot_id = message['uniprot_id']
 
     # Execute the shell command with the job ID
-    command = f"python fold.py {job_id}"
-    subprocess.call(command, shell=True)
+    output_dir = f"{Config.AF_DIR}/{job_id}"
 
-    print(f"Executed command: {command}")
+    download_model(uniprot_id, job_id, output_dir)
 
     # Acknowledge the message to remove it from the queue
     ch.basic_ack(delivery_tag=method.delivery_tag)

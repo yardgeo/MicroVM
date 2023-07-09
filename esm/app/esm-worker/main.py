@@ -1,6 +1,7 @@
 import pika
 import subprocess
 from config import Config
+import json
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
@@ -17,10 +18,12 @@ channel.queue_declare(queue=RABBITMQ_QUEUE)
 
 # Callback function for processing messages
 def process_message(ch, method, properties, body):
-    job_id = body.decode()
+    message = json.loads(body)
+    job_id = message['job_id']
+    uniprot_id = message['uniprot_id']
 
     # Execute the shell command with the job ID
-    input_file = f"{Config.UNIPROT_DIR}/{job_id}/protein.fasta"
+    input_file = f"{Config.UNIPROT_DIR}/{job_id}/{uniprot_id}.fasta"
     output_dir = f"{Config.ESM_DIR}/{job_id}"
 
     command = f"python fold.py -i {input_file} -o {output_dir}"
