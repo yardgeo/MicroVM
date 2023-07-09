@@ -40,6 +40,7 @@ def retrieve_pdb_id(uniprot_id):
                     f"PDB ID retrieved for UniProt ID: {uniprot_id} is {pdb_id}")
             else:
                 print(f"No PDB ID found for UniProt ID: {uniprot_id}")
+            return pdb_id
         else:
             print(f"Failed to retrieve PDB ID for UniProt ID: {uniprot_id}")
 
