@@ -22,6 +22,7 @@ services:
     volumes:
       - /mnt/alphafold/input/esm/app/uniprot:/opt/openfold/uniprot
       - /mnt/alphafold/input/esm/app/pdb:/opt/openfold/pdb
+      - /mnt/alphafold/input/esm/app/af:/opt/openfold/af
     environment:
       - RABBITMQ_HOST=rabbitmq
     networks:

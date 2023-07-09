@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from config import Config
+from utils import download_structure_from_pdb
 
 
 class CreateJobModel(BaseModel):
@@ -29,41 +30,6 @@ channel = connection.channel()
 # Declare the queue
 channel.queue_declare(queue=RABBITMQ_ESM_QUEUE)
 channel.queue_declare(queue=RABBITMQ_AF_QUEUE)
-
-
-def download_structure_from_pdb(uniprot_id, job_id):
-    # Define the PDB API endpoint
-    api_url = f"https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/{uniprot_id}"
-
-    try:
-        # Send GET request to the API endpoint
-        response = requests.get(api_url)
-        response_json = response.json()
-
-        # Check if the response contains mappings
-        if "mappings" in response_json:
-            # Get the first mapping entry (assuming there's only one)
-            mapping = response_json["mappings"][0]
-
-            # Extract the PDB ID
-            pdb_id = mapping["identifier"]
-
-            # Download the structure file
-            pdb_url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
-            pdb_response = requests.get(pdb_url)
-
-            # Save the structure file
-            file_name = f"{Config.PDB_DIR}/{job_id}/protein.pdb"
-            with open(file_name, "wb") as f:
-                f.write(pdb_response.content)
-
-            print(
-                f"Structure downloaded for UniProt ID: {uniprot_id}, PDB ID: {pdb_id}")
-        else:
-            print(f"No mappings found for UniProt ID: {uniprot_id}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error occurred during the request: {e}")
 
 
 @app.post("/jobs/")
