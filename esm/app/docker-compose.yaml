@@ -9,6 +9,7 @@ services:
       - esm_af_network
 
   core-api:
+    container_name: core-api-container
     build:
       context: core-api
       dockerfile: Dockerfile
@@ -26,6 +27,7 @@ services:
       - esm_af_network
 
   esm-worker:
+    container_name: esm-worker-container
     build:
       context: esm-worker
       dockerfile: Dockerfile
