@@ -28,6 +28,8 @@ def process_message(ch, method, properties, body):
 
     download_model(uniprot_id, job_id, output_dir)
 
+    print("AF model was downloaded")
+
     # Acknowledge the message to remove it from the queue
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
