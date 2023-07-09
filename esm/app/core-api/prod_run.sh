@@ -1,2 +1,2 @@
 sleep 10
-uvicorn main:app --host 0.0.0.0
+uvicorn main:app --host 0.0.0.0 --root-path /api/
