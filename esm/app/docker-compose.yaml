@@ -20,7 +20,7 @@ services:
     expose:
       - 8000
     volumes:
-      - /Users/gvyarduhin/Siemens/MicroVM/data/uniprot:/opt/openfold/uniprot
+      - /mnt/alphafold/input/esm/app/uniprot:/opt/openfold/uniprot
     environment:
       - RABBITMQ_HOST=rabbitmq
     networks:

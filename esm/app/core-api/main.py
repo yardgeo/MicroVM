@@ -31,7 +31,7 @@ channel.queue_declare(queue=RABBITMQ_ESM_QUEUE)
 @app.post("/jobs/")
 async def create_job(model: CreateJobModel):
     uniprot_id = model.uniprotId
-    job_id = uuid.uuid4()
+    job_id = str(uuid.uuid4())
 
     # create sub_dirs
     os.makedirs(f"{Config.PDB_DIR}/{job_id}", exist_ok=True)
