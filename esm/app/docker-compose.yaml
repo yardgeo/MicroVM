@@ -1,0 +1,43 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3.8
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - esm_af_network
+
+  core-api:
+    build:
+      context: core-api
+      dockerfile: Dockerfile
+    env_file:
+      - dev.env
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8000:8000"
+    volumes:
+      - /Users/gvyarduhin/Siemens/MicroVM/data/uniprot:/opt/openfold/uniprot
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - esm_af_network
+
+  esm-worker:
+    build:
+      context: esm-worker
+      dockerfile: Dockerfile
+    env_file:
+      - dev.env
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - esm_af_network
+
+networks:
+  esm_af_network:
+    driver: bridge
