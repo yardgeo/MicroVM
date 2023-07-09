@@ -20,7 +20,10 @@ def process_message(ch, method, properties, body):
     job_id = body.decode()
 
     # Execute the shell command with the job ID
-    command = f"python test.py"
+    input_file = f"{Config.UNIPROT_DIR}/{job_id}/protein.fasta"
+    output_dir = f"{Config.ESM_DIR}/{job_id}"
+
+    command = f"python fold.py -i {input_file} -o {output_dir}"
     subprocess.call(command, shell=True)
 
     print(f"Executed command: {command}")

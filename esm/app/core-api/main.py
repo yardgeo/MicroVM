@@ -48,7 +48,7 @@ async def create_job(model: CreateJobModel):
 
     if response.status_code == 200:
         # Save the downloaded FASTA file
-        file_name = f"{Config.UNIPROT_DIR}/{job_id}/{uniprot_id}.fasta"
+        file_name = f"{Config.UNIPROT_DIR}/{job_id}/protein.fasta"
         with open(file_name, "w") as file:
             file.write(response.text)
     else:

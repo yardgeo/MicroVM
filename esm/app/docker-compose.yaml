@@ -28,6 +28,13 @@ services:
 
   esm-worker:
     container_name: esm-worker-container
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
     build:
       context: esm-worker
       dockerfile: Dockerfile
@@ -35,6 +42,9 @@ services:
       - dev.env
     depends_on:
       - rabbitmq
+    volumes:
+      - /mnt/alphafold/input/esm/app/uniprot:/opt/openfold/uniprot
+      - /mnt/alphafold/input/esm/app/esm:/opt/openfold/esm
     environment:
       - RABBITMQ_HOST=rabbitmq
     networks:

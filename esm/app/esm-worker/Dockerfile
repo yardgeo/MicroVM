@@ -1,11 +1,9 @@
-FROM python:3.8
+FROM openfold
 
-RUN mkdir -p /usr/src/core-api
-WORKDIR /usr/src/core-api
-COPY requirements.txt /usr/src/core-api/
+COPY requirements.txt /opt/openfold/
 
 RUN python3 -m pip install -r requirements.txt --no-cache-dir
 
-COPY . /usr/src/core-api
+COPY . /opt/openfold/
 
 ENTRYPOINT ["sh", "prod_run.sh"]
