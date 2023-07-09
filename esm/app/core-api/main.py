@@ -21,6 +21,7 @@ app = FastAPI()
 RABBITMQ_HOST = Config.RABBITMQ_HOST
 RABBITMQ_ESM_QUEUE = Config.RABBITMQ_ESM_QUEUE
 RABBITMQ_AF_QUEUE = Config.RABBITMQ_AF_QUEUE
+RABBITMQ_RESULTS_QUEUE = Config.RABBITMQ_RESULTS_QUEUE
 
 # Establish connection to RabbitMQ server
 connection = pika.BlockingConnection(
@@ -30,6 +31,7 @@ channel = connection.channel()
 # Declare the queue
 channel.queue_declare(queue=RABBITMQ_ESM_QUEUE)
 channel.queue_declare(queue=RABBITMQ_AF_QUEUE)
+channel.queue_declare(queue=RABBITMQ_RESULTS_QUEUE)
 
 
 @app.post("/jobs/")
@@ -74,6 +76,10 @@ async def create_job(model: CreateJobModel):
 
     channel.basic_publish(exchange='',
                           routing_key=RABBITMQ_AF_QUEUE,
+                          body=json.dumps(message))
+
+    channel.basic_publish(exchange='',
+                          routing_key=RABBITMQ_RESULTS_QUEUE,
                           body=json.dumps(message))
 
     print(f"Message sent with job ID: {job_id}")
