@@ -32,9 +32,9 @@ def process_message(ch, method, properties, body):
     pdb = f"{Config.PDB_DIR}/{job_id}/{uniprot_id}.pdb"
 
     # result files
-    result_AF_PDB = f"{Config.RESULTS_DIR}/AF_PDB.html"
-    result_ESM_PDB = f"{Config.RESULTS_DIR}/ESM_PDB.html"
-    result_ESM_AF = f"{Config.RESULTS_DIR}/ESM_AF.html"
+    result_AF_PDB = f"{Config.RESULTS_DIR}/{job_id}/AF_PDB.html"
+    result_ESM_PDB = f"{Config.RESULTS_DIR}/{job_id}/ESM_PDB.html"
+    result_ESM_AF = f"{Config.RESULTS_DIR}/{job_id}/ESM_AF.html"
 
     # wait for files
     # should_continue = check_files_existence(esm_pdb, af_pdb)
