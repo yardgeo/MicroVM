@@ -36,4 +36,4 @@ def finish_job(job_id: int, result_path: str):
     if r.status_code == 200:
         print("Complete job successful")
     else:
-        print("Cannot complete job")
+        print(r.reason, "Cannot complete job")
