@@ -15,5 +15,5 @@ class Config:
     STATUS_RUNNING = os.getenv("STATUS_RUNNING", "RUNNING")
     STATUS_COMPLETED = os.getenv("STATUS_COMPLETED", "COMPLETED")
     BASE_URL = os.getenv("BASE_URL", "")
-    CORE_API_URL = os.getenv("CORE_API_URL",
+    PROD_CORE_API_URL = os.getenv("PROD_CORE_API_URL",
                              "https://cloud-vm84.cloud.cnaf.infn.it/api/")
