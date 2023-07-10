@@ -24,6 +24,7 @@ class Job(JobBase):
     end: Optional[int]
     status: Optional[str]
     result_path: Optional[str]
+    download_url: Optional[str]
 
     class Config:
         orm_mode = True

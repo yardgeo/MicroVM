@@ -15,3 +15,4 @@ class Job(Base):
     uniprot_id = Column(String)
     fasta_text = Column(Text)
     result_path = Column(String, nullable=True)
+    download_url = Column(String, nullable=True)
