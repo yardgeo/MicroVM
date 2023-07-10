@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -18,10 +20,10 @@ class JobCreate(JobBase):
 
 class Job(JobBase):
     id: int
-    start: int
-    end: int
-    status: str
-    result_path: str
+    start: Optional[int]
+    end: Optional[int]
+    status: Optional[str]
+    result_path: Optional[str]
 
     class Config:
         orm_mode = True
