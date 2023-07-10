@@ -3,4 +3,5 @@ pydantic
 uvicorn
 requests
 pika
+psycopg2-binary
 sqlalchemy
