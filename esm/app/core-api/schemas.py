@@ -18,7 +18,10 @@ class JobCreate(JobBase):
 
 class Job(JobBase):
     id: int
-    owner_id: int
+    start: int
+    end: int
+    status: str
+    result_path: str
 
     class Config:
         orm_mode = True
