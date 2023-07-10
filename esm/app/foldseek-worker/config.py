@@ -13,3 +13,6 @@ class Config:
     RABBITMQ_RESULTS_QUEUE = os.getenv("RABBITMQ_RESULTS_QUEUE")
     TIME_LIMIT = 1e3
     TIME_SLEEP = 15
+    ALLOWED_TYPES = ['foldseek']
+    FINISH_TYPE = 'foldseek'
+    CORE_API_URL = os.getenv("CORE_API_URL")

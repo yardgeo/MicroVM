@@ -10,3 +10,6 @@ class Config:
     RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
     RABBITMQ_ESM_QUEUE = os.getenv("RABBITMQ_ESM_QUEUE")
     RABBITMQ_AF_QUEUE = os.getenv("RABBITMQ_AF_QUEUE")
+    ALLOWED_TYPES = ['af', 'foldseek']
+    FINISH_TYPE = 'af'
+    CORE_API_URL = os.getenv("CORE_API_URL")

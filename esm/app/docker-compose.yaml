@@ -1,5 +1,17 @@
 version: '3'
 services:
+  db:
+    image: postgres
+    container_name: esm-af-db
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=esmafdb
+    networks:
+      - esm_af_network
+
   rabbitmq:
     image: rabbitmq:3.8
     ports:
@@ -17,6 +29,7 @@ services:
       - dev.env
     depends_on:
       - rabbitmq
+      - db
     expose:
       - 8000
     volumes:
@@ -27,6 +40,7 @@ services:
       - /mnt/alphafold/input/esm/app/results:/opt/openfold/results
     environment:
       - RABBITMQ_HOST=rabbitmq
+      - DATABASE_URL=postgresql://admin:admin@db/esmafdb
     networks:
       - esm_af_network
 

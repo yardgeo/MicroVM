@@ -1,21 +1,32 @@
-import os
-import uuid
 import json
+import os
+from typing import List
 
 import pika
 import requests
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
 
 from config import Config
 from utils import download_structure_from_pdb
+from . import crud, schemas
+from . import models
+from .database import SessionLocal, engine
 
-
-class CreateJobModel(BaseModel):
-    uniprotId: str
-
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
@@ -34,10 +45,12 @@ channel.queue_declare(queue=RABBITMQ_AF_QUEUE)
 channel.queue_declare(queue=RABBITMQ_RESULTS_QUEUE)
 
 
-@app.post("/jobs/")
-async def create_job(model: CreateJobModel):
-    uniprot_id = model.uniprotId
-    job_id = str(uuid.uuid4())
+@app.post("/jobs/", response_model=schemas.Job)
+async def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
+    created_job = crud.create_job(db=db, job=job)
+
+    uniprot_id = created_job.uniprot_id
+    job_id = created_job.id
 
     # create sub_dirs
     os.makedirs(f"{Config.PDB_DIR}/{job_id}", exist_ok=True)
@@ -66,7 +79,8 @@ async def create_job(model: CreateJobModel):
     # make message
     message = {
         'job_id': job_id,
-        'uniprot_id': uniprot_id
+        'uniprot_id': uniprot_id,
+        'type': created_job.type
     }
 
     # run async jobs
@@ -84,15 +98,38 @@ async def create_job(model: CreateJobModel):
 
     print(f"Message sent with job ID: {job_id}")
 
-    return {"jobId": job_id}
+    return created_job
 
 
-@app.get("/jobs/{job_id}/status")
-async def job_status(job_id: str):
-    esm_pdb_ready = os.path.isfile(
-        f"{Config.RESULTS_DIR}/{job_id}/esm_pdb.html")
-    af_pdb_ready = os.path.isfile(f"{Config.RESULTS_DIR}/{job_id}/af_pdb.html")
-    esm_af_ready = os.path.isfile(f"{Config.RESULTS_DIR}/{job_id}/esm_af.html")
-    return {"ESM_PDB_Ready": esm_pdb_ready,
-            "AF_PDB_Ready": af_pdb_ready,
-            "ESM_AF_Ready": esm_af_ready}
+@app.get("/jobs/{job_id}/", response_model=schemas.Job)
+async def get_job(job_id: int, db: Session = Depends(get_db)):
+    db_job = crud.get_job(db, job_id=job_id)
+    if db_job is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return db_job
+
+
+@app.get("/jobs/", response_model=List[schemas.Job])
+async def job_list(skip: int = 0, limit: int = 100,
+                   db: Session = Depends(get_db)):
+    return crud.get_jobs(db, skip=skip, limit=limit)
+
+
+@app.post("/jobs/{job_id}/complete", response_model=schemas.Job)
+async def complete_job(job_id: int,
+                       job_result: schemas.JobResult,
+                       db: Session = Depends(get_db)):
+    return crud.complete_job(db, job_id, job_result)
+
+
+@app.get("/jobs/{job_id}/results")
+async def download_results(job_id: int, db: Session = Depends(get_db)):
+    db_job = crud.get_job(db, job_id=job_id)
+    if db_job is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return FileResponse(db_job.result_path)
+
+
+@app.delete("/jobs/{job_id}/")
+async def delete_job(job_id: int):
+    pass

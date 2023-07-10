@@ -2,6 +2,7 @@ import pika
 import subprocess
 from config import Config
 import json
+from utils import finish_job
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
@@ -21,6 +22,11 @@ def process_message(ch, method, properties, body):
     message = json.loads(body)
     job_id = message['job_id']
     uniprot_id = message['uniprot_id']
+    job_type = message['type']
+
+    # check if job type allowed
+    if job_type not in Config.ALLOWED_TYPES:
+        return
 
     # Execute the shell command with the job ID
     input_file = f"{Config.UNIPROT_DIR}/{job_id}/{uniprot_id}.fasta"
@@ -30,6 +36,10 @@ def process_message(ch, method, properties, body):
     subprocess.call(command, shell=True)
 
     print(f"Executed command: {command}")
+
+    # mark job as completed
+    if job_type == Config.FINISH_TYPE:
+        finish_job(job_id, f"{output_dir}/{uniprot_id}.pdb")  # TODO
 
     # Acknowledge the message to remove it from the queue
     ch.basic_ack(delivery_tag=method.delivery_tag)

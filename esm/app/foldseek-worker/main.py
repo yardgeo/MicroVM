@@ -5,7 +5,7 @@ import subprocess
 import pika
 
 from config import Config
-from utils import check_files_existence
+from utils import check_files_existence, finish_job
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
@@ -25,6 +25,11 @@ def process_message(ch, method, properties, body):
     message = json.loads(body)
     job_id = message['job_id']
     uniprot_id = message['uniprot_id']
+    job_type = message['type']
+
+    # check if job type allowed
+    if job_type not in Config.ALLOWED_TYPES:
+        return
 
     # pdb files
     esm_pdb = f"{Config.ESM_DIR}/{job_id}/{uniprot_id}.pdb"
@@ -68,6 +73,10 @@ def process_message(ch, method, properties, body):
     #
     # subprocess.call(command, shell=True)
     # print(f"Executed command: {command}")
+
+    # mark job as completed
+    if job_type == Config.FINISH_TYPE:
+        finish_job(job_id, result_AF_PDB)#TODO
 
     # Acknowledge the message to remove it from the queue
     ch.basic_ack(delivery_tag=method.delivery_tag)
