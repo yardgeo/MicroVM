@@ -8,11 +8,12 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
+import crud
+import models
+import schemas
 from config import Config
 from utils import download_structure_from_pdb
-from . import crud, schemas
-from . import models
-from .database import SessionLocal, engine
+from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 

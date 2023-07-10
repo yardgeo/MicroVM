@@ -9,6 +9,8 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=esmafdb
+    volumes:
+      - /mnt/alphafold/input/esm/app/db:/var/lib/postgresql/data
     networks:
       - esm_af_network
 

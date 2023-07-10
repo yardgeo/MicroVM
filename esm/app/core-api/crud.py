@@ -2,8 +2,9 @@ import time
 
 from sqlalchemy.orm import Session
 
+import models
+import schemas
 from config import Config
-from . import models, schemas
 
 
 def get_job(db: Session, job_id: int) -> models.Job:
