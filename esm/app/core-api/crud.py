@@ -11,8 +11,12 @@ def get_job(db: Session, job_id: int) -> models.Job:
     return db.query(models.Job).filter(models.Job.id == job_id).first()
 
 
-def get_jobs(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Job).offset(skip).limit(limit).all()
+def get_jobs(db: Session, skip: int = 0, limit: int = 100, job_type: str = None):
+    if job_type is None:
+        return db.query(models.Job).offset(skip).limit(limit).all()
+    else:
+        return db.query(models.Job).filter(models.Job.type == job_type)\
+            .offset(skip).limit(limit).all()
 
 
 def complete_job(db: Session, job_id: int, job_result: schemas.JobResult):

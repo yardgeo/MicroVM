@@ -122,9 +122,13 @@ async def get_job(job_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/jobs/", response_model=List[schemas.Job])
-async def job_list(skip: int = 0, limit: int = 100,
+async def job_list(skip: int = 0,
+                   limit: int = 100,
+                   job_type: str = None,
                    db: Session = Depends(get_db)):
-    return crud.get_jobs(db, skip=skip, limit=limit)
+    return crud.get_jobs(db,
+                         job_type=job_type,
+                         skip=skip, limit=limit)
 
 
 @app.post("/jobs/{job_id}/complete", response_model=schemas.Job)
