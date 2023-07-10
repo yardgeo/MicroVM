@@ -20,7 +20,7 @@ def complete_job(db: Session, job_id: int, job_result: schemas.JobResult):
     job.status = Config.STATUS_COMPLETED
     job.end = int(time.time())
     job.result_path = job_result.result_path
-    job.download_url = f"{Config.CORE_API_URL}/jobs/{job_id}/results"
+    job.download_url = f"{Config.PROD_CORE_API_URL}/jobs/{job_id}/results"
     db.add(job)
     db.commit()
     db.refresh(job)
