@@ -1,47 +1,38 @@
-import requests
+class Status:
+    def __init__(self, stat1=0, stat2=0):
+        self.stat1 = stat1
+        self.stat2 = stat2
 
 
-def retrieve_pdb_id(uniprot_id):
-    # Define the UniProt API endpoint
-    api_url = f"https://www.uniprot.org/uniprot/{uniprot_id}.xml"
+class Test:
+    def __init__(self, app_status: Status):
+        self.app_status = app_status
+        self.stat = {'stat1': self.app_status.stat1, 'stat2': self.app_status.stat2}
 
-    try:
-        # Send GET request to the API endpoint
-        response = requests.get(api_url)
+    def change_stat(self):
+        self.stat['stat1'] += 1
+        self.stat['stat2'] += 1
 
-        if response.status_code == 200:
-            # Parse the XML response
-            xml_data = response.text
+        print(id(self.stat['stat1']), id(self.app_status.stat1), id(0))
+        print(id(self.stat['stat2']), id(self.app_status.stat2))
 
-            # Extract the PDB ID from the XML data
-            pdb_id = extract_pdb_id(xml_data)
+        print(self.app_status.stat1, self.stat['stat1'])
 
-            if pdb_id:
-                print(
-                    f"PDB ID retrieved for UniProt ID: {uniprot_id} is {pdb_id}")
-            else:
-                print(f"No PDB ID found for UniProt ID: {uniprot_id}")
-        else:
-            print(f"Failed to retrieve PDB ID for UniProt ID: {uniprot_id}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error occurred during the request: {e}")
+        print(self.stat['stat1'] is self.app_status.stat1)
+        print(self.stat['stat2'] is self.app_status.stat2)
+        print(self.app_status.stat1 is self.app_status.stat2)
+        print(self.stat['stat2'] is self.stat['stat1'])
 
 
-def extract_pdb_id(xml_data):
-    # Extract the PDB ID from the XML data
-    start_index = xml_data.find('<dbReference type="PDB" id="')
-    if start_index != -1:
-        start_index += len('<dbReference type="PDB" id="')
-        end_index = xml_data.find('"', start_index)
-        pdb_id = xml_data[start_index:end_index]
-        return pdb_id
-    else:
-        return None
+def main():
+    15255
+    st = Status()
+    t = Test(st)
+    t.change_stat()
+    print(st.stat1, st.stat2)
 
 
-# Specify the UniProt ID of the protein
-uniprot_id = "A1A4S6"
+# if __name__ == 'main':
+#     main()
 
-# Retrieve the PDB ID
-retrieve_pdb_id(uniprot_id)
+main()
