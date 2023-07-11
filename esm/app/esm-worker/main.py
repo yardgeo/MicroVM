@@ -1,3 +1,5 @@
+import time
+
 import pika
 import subprocess
 from config import Config
@@ -37,6 +39,7 @@ def process_message(ch, method, properties, body):
     # command = f"python fold.py -i {input_file} -o {output_dir}"
 
     # API command
+    time.sleep(5)
     output = f"{output_dir}/{uniprot_id}.pdb"
     _, sequence = read_fasta(input_file)
     command = f" curl -X POST -o {output} --data {sequence}" \
