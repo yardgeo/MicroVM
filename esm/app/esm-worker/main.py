@@ -1,12 +1,11 @@
-import time
+import json
 
 import pika
-import subprocess
-from config import Config
-import json
-from utils import finish_job
-
 from esm.data import read_fasta
+
+from api_fold import esm_fold_pdb_api
+from config import Config
+from utils import finish_job
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = Config.RABBITMQ_HOST
@@ -38,17 +37,16 @@ def process_message(ch, method, properties, body):
 
     # command = f"python fold.py -i {input_file} -o {output_dir}"
 
+    # subprocess.call(command, shell=True)
+    #
+    # print(f"Executed command: {command}")
+
     # API command
     # time.sleep(20)
     output = f"{output_dir}/{uniprot_id}.pdb"
     _, sequence = next(read_fasta(input_file))
     print(sequence)
-    command = f" curl -X POST -o {output} --data {sequence}" \
-              f" https://api.esmatlas.com/foldSequence/v1/pdb/"
-
-    subprocess.call(command, shell=True)
-
-    print(f"Executed command: {command}")
+    esm_fold_pdb_api(sequence)
 
     # mark job as completed
     if job_type == Config.FINISH_TYPE:
