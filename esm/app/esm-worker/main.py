@@ -41,7 +41,8 @@ def process_message(ch, method, properties, body):
     # API command
     # time.sleep(20)
     output = f"{output_dir}/{uniprot_id}.pdb"
-    _, sequence = read_fasta(input_file)
+    sequence = read_fasta(input_file)
+    print(sequence)
     command = f" curl -X POST -o {output} --data {sequence}" \
               f" https://api.esmatlas.com/foldSequence/v1/pdb/"
 
