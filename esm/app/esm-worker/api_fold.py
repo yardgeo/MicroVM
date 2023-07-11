@@ -1,7 +1,7 @@
 import requests
 
 
-def esm_fold_pdb_api(sequence: str):
+def esm_fold_pdb_api(sequence: str, file_name: str):
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
     }
@@ -12,6 +12,8 @@ def esm_fold_pdb_api(sequence: str):
                       headers=headers, data=data)
 
     if r.status_code == 200:
+        with open(file_name, "wb") as file:
+            file.write(r.content)
         print("Complete job successful")
     else:
         print("Cannot complete job")

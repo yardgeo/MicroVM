@@ -46,7 +46,7 @@ def process_message(ch, method, properties, body):
     output = f"{output_dir}/{uniprot_id}.pdb"
     _, sequence = next(read_fasta(input_file))
     print(sequence)
-    esm_fold_pdb_api(sequence)
+    esm_fold_pdb_api(sequence, output)
 
     # mark job as completed
     if job_type == Config.FINISH_TYPE:
