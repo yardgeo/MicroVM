@@ -47,8 +47,8 @@ services:
       - esm_af_network
 
 
-#  esm-worker:
-#    container_name: esm-worker-container
+  esm-worker:
+    container_name: esm-worker-container
 #    deploy:
 #      resources:
 #        reservations:
@@ -56,21 +56,21 @@ services:
 #            - driver: nvidia
 #              count: 1
 #              capabilities: [ gpu ]
-#    build:
-#      context: esm-worker
-#      dockerfile: Dockerfile
-#    env_file:
-#      - dev.env
-#    depends_on:
-#      - rabbitmq
-#    volumes:
-#      - /mnt/alphafold/input/esm/app/uniprot:/opt/openfold/uniprot
-#      - /mnt/alphafold/input/esm/app/esm:/opt/openfold/esm
-#      - /mnt/alphafold/input/esm/checkpoints:/root/.cache/torch/hub/checkpoints
-#    environment:
-#      - RABBITMQ_HOST=rabbitmq
-#    networks:
-#      - esm_af_network
+    build:
+      context: esm-worker
+      dockerfile: Dockerfile
+    env_file:
+      - dev.env
+    depends_on:
+      - rabbitmq
+    volumes:
+      - /mnt/alphafold/input/esm/app/uniprot:/opt/openfold/uniprot
+      - /mnt/alphafold/input/esm/app/esm:/opt/openfold/esm
+      - /mnt/alphafold/input/esm/checkpoints:/root/.cache/torch/hub/checkpoints
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - esm_af_network
 
   af-worker:
     container_name: af-worker-container
